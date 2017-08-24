@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "watch": "DEBUG=api:* nodemon bin/www",
     "dev": "DEBUG=api:* node bin/www",
     "start": "node bin/www"
   },
@@ -15,5 +16,8 @@
     "morgan": "~1.7.0",
     "serve-favicon": "~2.3.0",
     "typescript": ""
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
   }
 }
