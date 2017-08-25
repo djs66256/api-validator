@@ -1,5 +1,5 @@
 <template>
-  <Table :columns='columns' :data='dataSource' />
+  <Table :columns='columns' :data='dataSource' @edit='edit'/>
 </template>
 
 <script>
@@ -8,11 +8,55 @@ import 'whatwg-fetch'
 export default {
   name: 'model-list',
   data() {
+    let self = this
     return {
       columns: [
         {
           title: '名称',
           key: 'interface'
+        },
+        {
+          title: '操作',
+          key: 'action',
+          width: 180,
+          render: function(createElement, params) {
+            let interfaceInfo = params.row
+            return createElement('div', [
+              createElement('Button', {
+                props: {
+                  type: 'text',
+                  size: 'small'
+                },
+                on: {
+                  click: function() {
+                    self.detail(interfaceInfo)
+                  }
+                }
+              }, '查看'),
+              createElement('Button', {
+                props: {
+                  type: 'text',
+                  size: 'small'
+                },
+                on: {
+                  click: function() {
+                    self.edit(interfaceInfo)
+                  }
+                }
+              }, '编辑'),
+              createElement('Button', {
+                props: {
+                  type: 'text',
+                  size: 'small'
+                },
+                on: {
+                  click: function() {
+                    self.delete(interfaceInfo)
+                  }
+                }
+              }, '删除')
+            ]);
+          }
         }
       ],
       dataSource: [
@@ -20,6 +64,22 @@ export default {
           interface: 'hahahah'
         }
       ]
+    }
+  },
+  methods: {
+    detail(interfaceInfo) {
+
+    },
+    delete(interfaceInfo) {
+
+    },
+    edit(interfaceInfo) {
+      this.$router.push({
+        name: 'modelEdit', 
+        params: {
+          interface: interfaceInfo.interface
+        }
+        })
     }
   },
   created() {

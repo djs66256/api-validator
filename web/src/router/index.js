@@ -68,6 +68,11 @@ export default new Router({
       path: '/model/add',
       name: 'modelAdd',
       component: ModelAdd
+    },
+    {
+      path: '/model/edit/:interface',
+      name: 'modelEdit',
+      component: ModelAdd
     }
   ]
 })
