@@ -72,7 +72,7 @@ class Persistent {
         }
         let str = data
         if (typeof data !== 'string') {
-            str = JSON.stringify(data)
+            str = JSON.stringify(data, null, 2)
         }
         fs.writeFile(path, str, (err) => {
           if (err) {
@@ -88,8 +88,27 @@ class Persistent {
       }
     })
   }
+  _readFromPath(path) {
+    return new Promise((resolve, reject) => {
+      if (fs.existsSync(path)) {
+        let buffer = fs.readFileSync(path)
+        resolve(buffer.toString())
+      }
+      else {
+        reject(new Error('File not exists!'))
+      }
+    })
+  }
 
   interfacePath(name) {
+    let filename = this._modelFilename(name)
+    return filename && filename + '.ts'
+  }
+  modelDataPath(name) {
+    let filename = this._modelFilename(name)
+    return filename && filename + '.txt'
+  }
+  _modelFilename(name) {
     let model = this.models[name]
     if (model && model.filename) {
       return path.join(this.node_modules, model.filename)
@@ -105,10 +124,13 @@ class Persistent {
       if (!model) {
         model = {
           interface: name,
-          filename: `${name}.ts`
+          filename: `${name}`
         }
       }
-      this.saveModel(`interface ${name}\n ${str}`, model.filename)
+      this.saveInterface(`interface ${name}\n${str}`, model.filename)
+      .then(() => {
+        return this.saveModelData(str, model.filename)
+      })
       .then(()=> {
         this.models[name] = model
         return this.saveApiValidatorIndex()
@@ -120,12 +142,16 @@ class Persistent {
       .catch(reject)
     })
   }
-  removeInterface(name) {
+  removeInterface({name}) {
     return new Promise((resolve, reject) => {
+      if (!this.models[name]) {
+        reject(new Error('Model not exists!'))
+        return
+      }
       delete this.models[name]
       return this.saveApiValidatorIndex().then(() => {
-        return this.saveModels()
-      })
+        return this.saveModels().then(resolve).catch(reject)
+      }).catch(reject)
     })
   }
 
@@ -169,8 +195,14 @@ class Persistent {
   saveModels() {
     return this._writeToPath(this.models, this.modelsPath)
   }
-  saveModel(str, filename) {
-    return this._writeToPath(str, path.join(this.node_modules, filename))
+  saveModelData(str, filename) {
+    return this._writeToPath(str, path.join(this.node_modules, filename + '.txt'))
+  }
+  findModelData(filename) {
+    return this._readFromPath(path.join(this.node_modules, filename + '.txt'))
+  }
+  saveInterface(str, filename) {
+    return this._writeToPath(str, path.join(this.node_modules, filename + '.ts'))
   }
 }
 

@@ -7,8 +7,10 @@
       </Button>
     </div>
     <div class="add-container">
-      <label>Model定义 <Input size="large" placeholder="输入英文名（禁用特殊符号）" :value="name"/></label>
-      <Input class="input-margin" size="large" placeholder="输入接口定义" type="textarea" :rows="30" :value="value"/>
+      <label>Model定义 
+        <Input size="large" placeholder="输入英文名（禁用特殊符号）" v-model="name"/>
+      </label>
+      <Input class="input-margin" size="large" placeholder="输入接口定义" type="textarea" :rows="30" v-model="value"/>
     </div>
   </div>
 </template>
@@ -21,6 +23,7 @@ export default {
   data() {
     return {
       uploading: false,
+      downloading: true,
       name: null,
       value: null
     }
@@ -56,6 +59,33 @@ export default {
       })
       .then(() => {
         this.uploading = false
+      })
+    }
+  },
+  created() {
+    if (this.$route.params && this.$route.params.interface) {
+      this.$Loading.start();
+      fetch(`/api/model/${this.$route.params.interface}`)
+      .then(res => {
+        return res.json()
+      })
+      .then(res => {
+        if (res.code === 1) {
+          console.log(res)
+          let {name, data} = res.result
+          this.name = name
+          this.value = data
+        }
+        else {
+          throw new Error(res.message)
+        }
+      })
+      .catch(e => {
+        console.error(e.message)
+        this.$Message.error({content: e.message})
+      })
+      .then(() => {
+        this.$Loading.finish();
       })
     }
   }

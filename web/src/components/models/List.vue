@@ -1,5 +1,14 @@
 <template>
+<div>
   <Table :columns='columns' :data='dataSource' @edit='edit'/>
+  <Modal
+    v-model="modal.show"
+    :title="modal.title"
+    @on-ok="modalOk"
+    @on-cancel="modalCancel">
+    <p>{{modal.title}}</p>
+  </Modal>
+</div>
 </template>
 
 <script>
@@ -10,10 +19,17 @@ export default {
   data() {
     let self = this
     return {
+      modal: {
+        show: false,
+        loading: false,
+        title: '',
+        ok: null,
+        cancel: null
+      },
       columns: [
         {
           title: '名称',
-          key: 'interface'
+          key: 'name'
         },
         {
           title: '操作',
@@ -67,11 +83,60 @@ export default {
     }
   },
   methods: {
+    modalOk() {
+      let modal = this.modal
+      if (modal.ok) {
+        this.modal = Object.assign(this.modal, {loading: true})
+        modal.ok().catch(() => {}).then(() => {
+          this.modal = {
+            show: false,
+            loading: false,
+            title: ''
+          }
+        })
+      }
+      else {
+        this.modalCancel()
+      }
+    },
+    modalCancel() {
+      this.modal = {
+        show: false,
+        loading: false,
+        title: ''
+      }
+    },
     detail(interfaceInfo) {
 
     },
     delete(interfaceInfo) {
-
+      let ok = () => {
+        return fetch(`/api/model/${interfaceInfo.name}`, {
+          method: 'DELETE'
+        })
+        .then(res => {
+          return res.json()
+        })
+        .then(res => {
+          if (res.code === 1) {
+            this.$Message.info({content: '删除成功！'})
+            this.dataSource = this.dataSource.filter(i => i.name !== interfaceInfo.name)
+          }
+          else {
+            throw new Error(res.message)
+          }
+        })
+        .catch(e => {
+          console.log(e.message)
+          this.$Message.error({content: e.message})
+        })
+      }
+      this.modal = {
+        show: true,
+        loading: false,
+        title: `是否删除定义：${interfaceInfo.name}`,
+        ok
+      }
     },
     edit(interfaceInfo) {
       this.$router.push({
@@ -89,9 +154,7 @@ export default {
       if (res.code === 1) {
         let models = res.result
         console.info(models)
-        this.dataSource = Object.keys(models).sort((a, b) => a <= b).map(key => {
-          return models[key]
-        })
+        this.dataSource = models
       }
       else {
         throw new Error(res.message)
