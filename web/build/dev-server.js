@@ -49,6 +49,32 @@ Object.keys(proxyTable).forEach(function (context) {
   app.use(proxyMiddleware(options.filter || context, options))
 })
 
+// proxy api
+var http = require('http')
+
+app.all('/api/*', function(req, res, next) {
+  console.log('redirect: ', req.path, req.body)
+  try {
+    let redirect = http.request({
+      hostname: 'localhost',
+      port: 3000,
+      method: req.method,
+      path: req.path,
+      headers: req.headers
+    }, (redirectRes)=>{
+      try {
+        redirectRes.pipe(res)
+      }
+      catch(e) {
+        res.send(e.message)
+      }
+    });
+    req.pipe(redirect)
+  }
+  catch(e) {
+    res.send(e.message)
+  }
+})
 // handle fallback for HTML5 history API
 app.use(require('connect-history-api-fallback')())
 

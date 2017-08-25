@@ -8,7 +8,10 @@ export default {
   data() {
     return {
       columns: [
-
+        {
+          title: '名称',
+          key: 'interface'
+        }
       ],
       dataSource: [
 

@@ -9,6 +9,7 @@ import ApiList from '@/components/api/List'
 
 import ModelsContent from '@/components/models/ModelsContent'
 import ModelList from '@/components/models/List'
+import ModelAdd from '@/components/models/Add'
 
 let baseRouter = ''
 if (process.env === 'production') {
@@ -60,11 +61,13 @@ export default new Router({
           path: 'list',
           alias: '',
           component: ModelList
-        },
-        {
-          path: 'add'
         }
       ]
+    },
+    {
+      path: '/model/add',
+      name: 'modelAdd',
+      component: ModelAdd
     }
   ]
 })

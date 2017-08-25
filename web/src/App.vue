@@ -46,7 +46,7 @@
     <div class="layout">
         <Row type="flex" class="layout-content-row" >
             <i-col span="5" class="layout-menu-left">
-                <Menu active-name="validator" theme="dark" width="auto" 
+                <Menu ref="menu" active-name="validator" theme="dark" width="auto" 
                   :open-names="['api']" @on-select="selectItem">
                     <div class="layout-logo-left"></div>
                     <Submenu name="api">
@@ -97,6 +97,7 @@
       name: 'App',
       methods: {
         selectItem: function (name) {
+          console.log(this.$refs.menu)
           console.log(name)
           this.$router.push({name})
         }

@@ -29,6 +29,7 @@ module.exports = {
     "semi": [1, "always"],
     "no-spaced-func": 1,
     "space-before-function-paren": [1, "always"],
-    "no-trailing-spaces": 0
+    "no-trailing-spaces": 0,
+    "brace-style": [0]
   }
 }
