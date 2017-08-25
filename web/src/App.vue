@@ -99,7 +99,7 @@
         selectItem: function (name) {
           console.log(name, this.$route, this.$router)
           if (name !== this.$route.name) {
-            this.$router.push({name})
+            this.$router.replace({name})
           }
         }
       }

@@ -3,12 +3,15 @@
     <div class="navigation">
       <Button type="success" @click="addApi">新建Api</Button>
     </div>
-    <router-view></router-view>
+    <ApiList />
+    <!-- <router-view></router-view> -->
   </div>  
 </template>
 
 <script>
 import 'whatwg-fetch'
+import ApiList from '@/components/api/List'
+
 export default {
   name: 'api',
   methods: {
@@ -17,6 +20,9 @@ export default {
         name: 'apiAdd'
       })
     }
+  },
+  components: {
+    ApiList
   }
 }
 </script>

@@ -5,7 +5,6 @@ import ValidatorContent from '@/components/validator/ValidatorContent'
 import ValidatorList from '@/components/validator/List'
 
 import ApiContent from '@/components/api/ApiContent'
-import ApiList from '@/components/api/List'
 import ApiEdit from '@/components/api/Add'
 
 import ModelsContent from '@/components/models/ModelsContent'
@@ -32,23 +31,16 @@ export default new Router({
           path: 'list',
           alias: '',
           component: ValidatorList
-        },
-        {
-          path: 'validate'
         }
+        // {
+        //   path: 'validate'
+        // }
       ]
     },
     {
       path: '/api',
       name: 'api',
-      component: ApiContent,
-      children: [
-        {
-          path: 'list',
-          alias: '',
-          component: ApiList
-        }
-      ]
+      component: ApiContent
     },
     {
       path: '/api/add',
