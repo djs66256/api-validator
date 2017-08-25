@@ -100,6 +100,7 @@ class Persistent {
     })
   }
 
+  // Model
   interfacePath(name) {
     let filename = this._modelFilename(name)
     return filename && filename + '.ts'
@@ -148,29 +149,16 @@ class Persistent {
         reject(new Error('Model not exists!'))
         return
       }
-      delete this.models[name]
-      return this.saveApiValidatorIndex().then(() => {
-        return this.saveModels().then(resolve).catch(reject)
-      }).catch(reject)
-    })
-  }
-
-  removeApi(api) {
-
-  }
-  insertOrUpdateApi(api, interfaceName) {
-    return new Promise((resolve, reject) => {
-      let apiInfo = this.models[api]
-      if (apiInfo) {
-        apiInfo.interface = interfaceName
-      }
-      else {
-        apiInfo = {interface: interfaceName}
-        this.models[api] = apiInfo
-        this.saveApiValidatorIndex().catch(reject)
-      }
-      this.saveModels().then(() => {
-        this.saveApis().then(resolve).catch(reject)
+      this.findApiByModel(name).then(apis => {
+        if (apis && apis.length > 0) {
+          reject(new Error(`Can not remove ${name}, ${JSON.stringify(apis)} contains model!`))
+        }
+        else {
+          delete this.models[name]
+          return this.saveApiValidatorIndex().then(() => {
+            return this.saveModels().then(resolve).catch(reject)
+          }).catch(reject)
+        }
       }).catch(reject)
     })
   }
@@ -189,9 +177,6 @@ class Persistent {
 
     return this._writeToPath(str, this.apiValidatorIndex)
   }
-  saveApis() {
-    return this._writeToPath(this.apis, this.apisPath)
-  }
   saveModels() {
     return this._writeToPath(this.models, this.modelsPath)
   }
@@ -203,6 +188,58 @@ class Persistent {
   }
   saveInterface(str, filename) {
     return this._writeToPath(str, path.join(this.node_modules, filename + '.ts'))
+  }
+
+  // Api
+  // {api: {name:model}}
+  findApis() {
+    return new Promise((resolve, reject) => {
+      resolve(this.apis)
+    })
+  }
+  findApi(api) {
+    return new Promise((resolve, reject) => {
+      let apiInfo = this.apis[api]
+      if (apiInfo) {
+        resolve(apiInfo)
+      }
+      else {
+        reject(new Error('Api not exists!'))
+      }
+    })
+  }
+  findApiByModel(name) {
+    return new Promis((resolve, reject) => {
+      let apis = Object.keys(this.apis).filter(key => {
+        return this.apis[key].name === name
+      })
+      resolve(apis)
+    })
+  }
+  removeApi(api) {
+    return new Promise((resolve, reject) => {
+      delete this.apis[api]
+      this.saveApis().then(resolve).catch(reject)
+    })
+  }
+  insertOrUpdateApi({api, model}) {
+    return new Promise((resolve, reject) => {
+      if (!this.models[model]) {
+        reject(new Error(`Model [${model}] not exists!`))
+        return
+      }
+      let apiInfo = this.apis[api]
+      if (apiInfo) {
+        apiInfo.name = model
+      }
+      else {
+        this.apis[api] = {name: model}
+      }
+      this.saveApis().then(resolve).catch(reject)
+    })
+  }
+  saveApis() {
+    return this._writeToPath(this.apis, this.apisPath)
   }
 }
 

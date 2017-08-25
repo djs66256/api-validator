@@ -1,6 +1,6 @@
 <template>
 <div>
-  <Table :columns='columns' :data='dataSource' @edit='edit'/>
+  <Table :columns='columns' :data='dataSource'/>
   <Modal
     v-model="modal.show"
     :title="modal.title"

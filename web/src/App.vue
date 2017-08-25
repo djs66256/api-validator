@@ -97,9 +97,10 @@
       name: 'App',
       methods: {
         selectItem: function (name) {
-          console.log(this.$refs.menu)
-          console.log(name)
-          this.$router.push({name})
+          console.log(name, this.$route, this.$router)
+          if (name !== this.$route.name) {
+            this.$router.push({name})
+          }
         }
       }
     }

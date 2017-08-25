@@ -55,6 +55,26 @@ class ModelService {
       persist.removeInterface(name).then(resolve).catch(reject)
     })
   }
+
+  insertOrUpdateApi({api, model}) {
+    return persist.insertOrUpdateApi({api, model})
+  }
+  
+  findApis() {
+    return persist.findApis().then(apis => {
+      return Object.keys(apis).map(key => {
+        return {api: key, model: apis[key].name}
+      })
+    })
+  }
+  findApi(api) {
+    return persist.findApi(api).then(apiInfo => {
+      return {api, model: apiInfo.name}
+    })
+  }
+  deleteApi(api) {
+    return persist.removeApi(api)
+  }
 }
 
 const service = new ModelService()

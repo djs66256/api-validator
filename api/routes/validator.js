@@ -53,4 +53,51 @@ router.delete('/model/:name', (req, res) => {
   })
 })
 
+router.get('/apis', (req, res) => {
+  modelService.findApis()
+  .then(apis => {
+    res.send(result.succeed(apis))
+  })
+  .catch(e => {
+    res.send(result.fail(e.message))
+  })
+})
+router.post('/api', (req, res) => {
+  if (!req.body.api || !req.body.model) {
+    res.send(result.fail('Invalidate parameter!'))
+    return
+  }
+  modelService.insertOrUpdateApi({api: req.body.api, model: req.body.model})
+  .then(() => {
+    res.send(result.succeed())
+  })
+  .catch(e => {
+    res.send(result.fail(e.message))
+  })
+})
+router.get('/api/:api', (req, res) => {
+  if (!req.params.api) {
+    res.send(result.fail('Invalidate parameter!'))
+    return
+  }
+  modelService.findApi(req.params.api).then(api => {
+    res.send(result.succeed(api))
+  }).catch(e => {
+    res.send(result.fail(e.message))
+  })
+})
+router.delete('/api/:api', (req, res) => {
+  if (!req.params.api) {
+    res.send(result.fail('Invalidate parameter!'))
+    return
+  }
+  modelService.deleteApi(req.params.api)
+  .then(() => {
+    res.send(result.succeed())
+  })
+  .catch(e => {
+    res.send(result.fail(e.message))
+  })
+})
+
 module.exports = router

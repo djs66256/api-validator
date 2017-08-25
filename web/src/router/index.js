@@ -6,6 +6,7 @@ import ValidatorList from '@/components/validator/List'
 
 import ApiContent from '@/components/api/ApiContent'
 import ApiList from '@/components/api/List'
+import ApiEdit from '@/components/api/Add'
 
 import ModelsContent from '@/components/models/ModelsContent'
 import ModelList from '@/components/models/List'
@@ -46,11 +47,18 @@ export default new Router({
           path: 'list',
           alias: '',
           component: ApiList
-        },
-        {
-          path: 'add'
         }
       ]
+    },
+    {
+      path: '/api/add',
+      name: 'apiAdd',
+      component: ApiEdit
+    },
+    {
+      path: '/api/edit/:api',
+      name: 'apiEdit',
+      component: ApiEdit
     },
     {
       path: '/models',
