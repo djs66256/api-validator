@@ -5,7 +5,7 @@ class Persistent {
   constructor({root = path.join('..', 'data')}={}) {
     this.root = root
     this.node_modules = path.join(root, 'node_modules', 'api-validator')
-    this.apiValidatorIndex = path.join(this.node_modules, 'index.js')
+    this.apiValidatorIndex = path.join(this.node_modules, 'index.ts')
     this.modelsPath = path.join(root, 'models.json')
     this.apisPath = path.join(root, 'apis.json')
 
@@ -119,6 +119,7 @@ class Persistent {
     }
   }
 
+  // {name: {interface: name, filename: name}}
   insertOrUpdateInterface(str, name) {
     return new Promise((resolve, reject) => {
       let model = this.models[name]
@@ -128,7 +129,7 @@ class Persistent {
           filename: `${name}`
         }
       }
-      this.saveInterface(`interface ${name}\n${str}`, model.filename)
+      this.saveInterface(`export default interface ${name}\n${str}`, model.filename)
       .then(() => {
         return this.saveModelData(str, model.filename)
       })
@@ -167,13 +168,13 @@ class Persistent {
     let importStr = ''
     let exportStr = ''
     for (var k in this.models) {
-      importStr += `import ${k} from '${this.models[k].interface}'\n`
+      importStr += `import ${k} from './${this.models[k].interface}'\n`
       if (exportStr.length) {
         exportStr += ',\n  '
       }
       exportStr += `${k}`
     }
-    let str = `${importStr}\nexport default {\n${exportStr}\n}`
+    let str = `${importStr}\nexport default {\n  ${exportStr}\n}`
 
     return this._writeToPath(str, this.apiValidatorIndex)
   }

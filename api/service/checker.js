@@ -27,10 +27,11 @@ class Checker {
 
   }
 
-  validateData(json) {
+  validateData(data, model) {
     return new Promise((resolve, reject) => {
       try {
-        let _ = JSON.parse(json)
+        let json = JSON.parse(data)
+        
       }
       catch (e) {
         reject(e)

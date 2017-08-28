@@ -3,6 +3,7 @@ const router = express.Router()
 const result = require('../views/result')
 
 const modelService = require('../service/model')
+const checker = require('../service/checker')
 // import checkerService from '../service/checker'
 
 router.get('/models', (req, res) => {
@@ -98,6 +99,20 @@ router.delete('/api/:api', (req, res) => {
   .catch(e => {
     res.send(result.fail(e.message))
   })
+})
+
+router.post('/validate', (req, res) => {
+  let {data, model} = req.body
+  if (!data || !model) {
+    res.send(result.fail('Invalidate parameter!'))
+  }
+  else {
+    checker.validateData(data, model).then(() => {
+      res.send(result.succeed())
+    }).catch(e => {
+      res.send(result.fail(e.message))
+    })
+  }
 })
 
 module.exports = router

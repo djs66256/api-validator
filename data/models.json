@@ -8,6 +8,17 @@
   "Test2": {
     "interface": "Test2",
     "filename": "Test2",
-    "name": "Test2"
+    "name": "Test2",
+    "data": "{\nid: string\n}"
+  },
+  "Test": {
+    "interface": "Test",
+    "filename": "Test",
+    "name": "Test"
+  },
+  "User": {
+    "interface": "User",
+    "filename": "User",
+    "name": "User"
   }
 }

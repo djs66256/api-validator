@@ -12,7 +12,8 @@
         </Select>
       </div>
     </div>
-    <div class="add-container">
+    <div class="content-container">
+      <Alert v-if="validateError" type="error">{{ validateError }}</Alert>
       <Row class="input-margin">
         <Col span="14">
           <Input size="large" placeholder="输入校验数据" type="textarea" :rows="30" v-model="data"/>
@@ -60,10 +61,11 @@ export default {
   },
   methods: {
     validate() {
-      fetch(`/api/validate/${this.selectedModel}`, {
+      fetch(`/api/validate`, {
         method: 'POST',
         body: {
-          data: this.data
+          data: this.data,
+          model: this.selectedModel
         }
       }).then(res => res.json())
       .then(res => {
@@ -122,7 +124,7 @@ export default {
   margin-top: 6px;
   margin-left: 10px;
 }
-.add-container {
+.content-container {
   display: flex;
   padding: 20px;
   flex-direction: column;
